@@ -1,0 +1,27 @@
+application: tomi33-url-shortener
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+# Server up the ./static/favicon.ico file for requests to /favicon.ico
+handlers:
+- url: /favicon\.ico
+  static_files: static/favicon.ico
+  upload: static/favicon\.ico
+
+# Serve content from /static as if it was in the webroot. Eg: requests to /css/style.css get served /static/css/style.css
+- url: /static
+  static_dir: static
+
+- url: .*
+  script: main.app
+
+# Load the following libraries from the built in App Engine libraries.
+# Read more (and see a list of available libs here: https://cloud.google.com/appengine/docs/python/tools/built-in-libraries-27 )
+# Note: You can also install your own: https://cloud.google.com/appengine/docs/python/tools/using-libraries-python-27#installing_a_library
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
