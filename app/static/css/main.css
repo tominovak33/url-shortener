@@ -1,0 +1,20 @@
+/* Very minimal css here as its just a url shortener */
+
+.margin-v-small {
+    margin-top: 10px;
+}
+
+.margin-v-medium {
+    margin-top: 20px;
+}
+
+.margin-v-large {
+    margin-top: 50px;
+}
+
+/* cannot copy from hidden element (display none) so just move it off screen */
+/* TODO: fix this hack */
+#short_url_copy_target {
+    position: absolute;
+    top:-3000px;
+}

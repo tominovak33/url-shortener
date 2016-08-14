@@ -15,6 +15,9 @@ class Url(ndb.Model):
     def set_full_url(self, full_url):
         self.full_url = full_url
 
+    def get_full_url(self):
+        return self.full_url
+
     def save(self):
         self.put()
 

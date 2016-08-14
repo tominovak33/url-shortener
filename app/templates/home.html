@@ -1,14 +1,23 @@
 {% extends "templates/base.html"%}
 {% block main %}
-<h1>Tomi URL Shortener</h1>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6 col-md-offset-3 text-center">
+        <h1>Tomi URL Shortener</h1>
+        <p>Enter a full url below</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
         {% include 'templates/forms/new_url_form.html' %}
     </div>
 </div>
 <div class="row">
-    <div class="col-md-12">
-        <div id="short_url_response"></div>
+    <div class="col-md-6 col-md-offset-3">
+        <div id="short_url_response_wrapper" class="alert alert-success hidden margin-v-medium" role="alert">
+            <p>Short URL: <a href="" id="short_url_response" class="alert-link"></a></p>
+        </div>
+        <input id="short_url_copy_target" type="text" />
+        <button id="copy_short_url_button" class="btn btn-primary hidden">Copy Short URL</button>
     </div>
 </div>
 {% endblock %}

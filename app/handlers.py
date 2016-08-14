@@ -19,7 +19,7 @@ class HomeHandler(BaseHandler):
         self.render_page('home', {})
 
 
-class GetUrlHandler(BaseHandler):
+class GetUrlApiHandler(BaseHandler):
     def get(self, route):
         url = url_model.get_by_short_url(route)
         if url:
@@ -30,7 +30,21 @@ class GetUrlHandler(BaseHandler):
             self.json_response({"error": "No url was found matching that request"})
 
 
-class CreateUrlHandler(BaseHandler):
+class GetUrlRedirectHandler(BaseHandler):
+    def get(self, route):
+        url = url_model.get_by_short_url(route)
+        if url:
+            full_url = str(url.get_full_url())
+            if full_url.find('http://') == -1 and full_url.find('https://') == -1:
+                full_url = '//' + full_url
+
+            self.redirect(full_url)
+            return
+        else:
+            self.json_response({"error": "No url was found matching that request"})
+
+
+class CreateUrlApiHandler(BaseHandler):
     def post(self):
         full_url = self.request.get('full_url')
         url = url_model.Url()
