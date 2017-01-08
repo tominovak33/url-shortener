@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Change into the ./bin directory so you can run the script from anywhere but the relative paths will still work
+cd "$(dirname "$0")"
+
+pip install -r requirements.txt -t app/lib
+
+git clone git@github.com:erlichmen/py-bcrypt.git app/lib/bcrypt

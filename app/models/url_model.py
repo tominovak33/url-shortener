@@ -1,13 +1,16 @@
 from google.appengine.ext import ndb
 from random import randint
+from datetime import datetime
+from models.user import User
 
 
 class Url(ndb.Model):
     short_url = ndb.StringProperty(indexed=True)
     full_url = ndb.StringProperty(indexed=False)
     date_created = ndb.DateTimeProperty(auto_now_add=True)
-    # uses = ndb.IntegerProperty(default=0)
-    # last_use = ndb.DateTimeProperty()
+    user = ndb.KeyProperty(kind=User, default=None)
+    uses = ndb.IntegerProperty(default=0)
+    last_use = ndb.DateTimeProperty()
 
     def set_short_url(self):
         self.short_url = generate_unique_short_url()
@@ -18,12 +21,39 @@ class Url(ndb.Model):
     def get_full_url(self):
         return self.full_url
 
+    def set_user(self, user):
+        if user and user.key:
+            self.user = user.key
+        else:
+            self.user = None
+
+    def get_user(self):
+        if self.user:
+            return self.user.get()
+        return None
+
     def save(self):
         self.put()
+
+    def use(self):
+        self.last_use = datetime.now()
+        self.uses += 1
+        return self.save()
 
     def get_values(self):
         return self.to_dict()
 
+    @staticmethod
+    def get_by_user(user):
+        if user and user.key:
+            # TODO: paginate query
+            return Url.query(Url.user == user.key).fetch()
+        return None
+
+    @staticmethod
+    def get_anonymous_urls():
+        # TODO: paginate query
+        return Url.query(Url.user == None).fetch()
 
 def generate_unique_short_url(max_length=6):
     access_code_alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -56,11 +86,11 @@ def check_short_url_is_unique(short_url):
 
 def get_by_short_url(short_url):
     url = False
-    res = Url.query(Url.short_url == short_url).fetch()
-    print res
+    res = Url.query(Url.short_url == short_url).fetch(1)
     for item in res:
         if item.short_url == short_url:
             url = item
+            url.use()
             break
     return url
 

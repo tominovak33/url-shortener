@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Change into the ./bin directory so you can run the script from anywhere but the relative paths will still work
+cd "$(dirname "$0")"
+
+CUSTOM_VERSION=$1
+
+TIMESTAMP=$(date "+%Y%m%d-%H%M")
+HASH="$(echo $(git rev-parse HEAD) | cut -c1-6)"
+
+VERSION=$TIMESTAMP'--'$HASH
+
+if [[ $CUSTOM_VERSION ]]; then
+    VERSION=$CUSTOM_VERSION
+fi
+
+printf  "=============================\n\
+== DEPLOYING TO APP-ENGINE ==\n\
+=============================\n\n
+Generated new version: %s\n" $VERSION
+
+# Double check user is certain
+read -n1 -p "Do you really want continue with this?"
+echo
+[[ ! $REPLY = [yY] ]] && echo "Exited deploy script." && exit 1;
+
+echo "Continuing with deployment"
+
+appcfg.py -A ultimateplayer-me-live -V $VERSION update ../app
+
+echo "Deployed $VERSION to App Engine"
