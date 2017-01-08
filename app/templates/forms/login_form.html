@@ -1,4 +1,11 @@
 <form action="/login" method="POST">
+    {% if login_error %}
+        <div class="form-group">
+            <div class="alert alert-danger" role="alert">
+                <span>{{ login_error }}</span>
+            </div>
+        </div>
+    {% endif %}
     <div class="form-group">
         <label for="email_address">Email</label>
         <input class="form-control" name="email_address" type="text" placeholder="example@example.com" />

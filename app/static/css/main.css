@@ -18,3 +18,11 @@
     position: absolute;
     top:-3000px;
 }
+
+.login-form, .new-url-form, .short-url-response-form{
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    box-shadow: 5px 5px 5px #DEDEDE;
+    border: 1px solid #d8dee2;
+}

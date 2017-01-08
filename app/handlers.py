@@ -129,10 +129,9 @@ class GetUrlApiHandler(BaseHandler):
         url = url_model.get_by_short_url(route)
         if url:
             response_data = url.get_values()
-            self.json_response(response_data)
-            return
+            return self.json_response(response_data)
         else:
-            self.json_response({"error": "No url was found matching that request"})
+            return self.json_response({"error": "No url was found matching that request"})
 
 
 class GetUrlRedirectHandler(BaseHandler):
@@ -179,16 +178,20 @@ class LoginHandler(BaseHandler):
         user = User.get_by_email(email_address)
         if user and user.password == helpers.check_password(self.request.get('password'), user.password):
             facades.login_user(self, user)
-            return self.response.write("Valid")
+            return self.redirect('/')
         else:
             logging.info("Failed login attempt for user: {0}".format(email_address))
-            return self.response.write("Invalid")
+            template_variables = {
+                'login_error': 'Login Error - Incorrect username or password'
+            }
+            return self.render_page('login', template_variables)
 
 
 class LogoutHandler(BaseHandler):
     @login_required()
     def get(self):
         auth.destroy_login_cookie(self)
+        return self.redirect('/')
 
 
 class NotFoundHandler(BaseHandler):
