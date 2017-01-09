@@ -2,6 +2,8 @@ import json
 import datetime
 import os
 from lib.bcrypt import bcrypt
+import logging
+import re
 
 # Patch the default json encoder to be able to deal with datetime objects
 # http://stackoverflow.com/questions/455580/json-datetime-between-python-and-javascript/32224522#32224522
@@ -76,3 +78,6 @@ def dev_write_to_file(file_name, content):
     else:
         logging.warn("Cannot do file I/O on when running on Cloud App Engine")
         return False
+
+# Anything except an '@' -> an '@' -> anything except an @ -> a '.' -> anything except an '@'
+EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")

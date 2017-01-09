@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 import helpers
+import re
 
 
 class User(ndb.Model):
@@ -19,18 +20,30 @@ class User(ndb.Model):
         return cls.query().filter(cls.user_id == user.user_id()).get()
 
     @staticmethod
-    def register(email_address, password):
+    def register(email_address, password, password_confirm):
+        error = None
+
+        if not helpers.EMAIL_REGEX.match(email_address):
+            error = 'Invalid email address'
+            return None, error
+
+        if User.get_by_email(email_address):
+            error = 'User exists'
+            return None, error
+
+        if password != password_confirm:
+            error = 'Passwords do not match'
+            return None, error
+
         user = User()
         user.email = email_address.lower()
-        print "Password"
-        print password
         user.password = helpers.hash_password(password)
 
-        return user.save()
+        return user.save(), error
 
     @staticmethod
     def get_user_by_id(id):
-        user = False
+        user = None
         query = User.query(User.user_id == id).fetch(1)
         for res in query:
             if res.user_id == id:
@@ -41,7 +54,7 @@ class User(ndb.Model):
 
     @staticmethod
     def get_by_email(email_address):
-        user = False
+        user = None
         query = User.query(User.email == email_address.lower()).fetch(1)
         for item in query:
             if item.email == email_address:

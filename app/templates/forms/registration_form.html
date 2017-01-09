@@ -1,4 +1,11 @@
 <form action="/register" method="POST">
+    {% if registration_error %}
+        <div class="form-group">
+            <div class="alert alert-danger" role="alert">
+                <span>{{ registration_error }}</span>
+            </div>
+        </div>
+    {% endif %}
     <div class="form-group">
         <label for="email_address">Email</label>
         <input class="form-control" name="email_address" type="text" placeholder="example@example.com" />
@@ -9,5 +16,5 @@
         <label for="password_confirm">Confirm Password</label>
         <input class="form-control" name="password_confirm" type="password" />
     </div>
-    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn btn-primary" type="submit">Register</button>
 </form>

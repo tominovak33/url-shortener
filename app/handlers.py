@@ -165,7 +165,16 @@ class RegistrationHandler(BaseHandler):
         return self.render_page('registration', {})
 
     def post(self):
-        User.register(self.request.get('email_address'), self.request.get('password'))
+        user, error = User.register(email_address=self.request.get('email_address'),
+                                    password=self.request.get('password'),
+                                    password_confirm=self.request.get('password_confirm'))
+
+        if error:
+            template_variables = {
+                'registration_error': error
+            }
+            return self.render_page('registration', template_variables)
+
         return self.response.write("Done")
 
 
