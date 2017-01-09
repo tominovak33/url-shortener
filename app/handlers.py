@@ -89,8 +89,9 @@ class BaseHandler(webapp2.RequestHandler):
             global_debug_stats['request_end_time'] = time.time()
             request_time = global_debug_stats['request_end_time'] - global_debug_stats['request_start_time']
             logging.info("Served request in {0} milliseconds".format(request_time*1000))
-            if request_time > 0.1:
+            if request_time > 0.2:
                 logging.error("Request taking too long")
+                # raise Exception("Request timed out")
 
 
 class HomeHandler(BaseHandler):
@@ -161,9 +162,11 @@ class CreateUrlApiHandler(BaseHandler):
 
 
 class RegistrationHandler(BaseHandler):
+    @check_login()
     def get(self):
         return self.render_page('registration', {})
 
+    @check_login()
     def post(self):
         user, error = User.register(email_address=self.request.get('email_address'),
                                     password=self.request.get('password'),
@@ -179,9 +182,11 @@ class RegistrationHandler(BaseHandler):
 
 
 class LoginHandler(BaseHandler):
+    @check_login()
     def get(self):
         return self.render_page('login', {})
 
+    @check_login()
     def post(self):
         email_address = self.request.get('email_address', None)
         user = User.get_by_email(email_address)
