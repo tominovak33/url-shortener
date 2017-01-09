@@ -1,5 +1,6 @@
 import jinja2
 import os
+import config
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader('templates'),
@@ -21,6 +22,8 @@ def generate_html(template_file_name, template_variables):
     # builds the path to the template
     if ".html" not in template_file_name:
         template_file_name += ".html"
+
+    template_variables['STATIC_ROOT'] = config.STATIC_ROOT
 
     # loads it into the Jinja environment
     template_file = JINJA_ENVIRONMENT.get_template(template_file_name)

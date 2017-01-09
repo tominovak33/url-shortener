@@ -13,6 +13,7 @@ class User(ndb.Model):
 
     def save(self):
         self.put()
+        return self
 
     @classmethod
     def get_by_user(cls, user):

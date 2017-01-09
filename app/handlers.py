@@ -1,8 +1,9 @@
 import webapp2
+from webapp2_extras import sessions
+
 import templates
 
 from google.appengine.api import users as g_users
-
 from models import url_model as url_model
 from models import facades
 from models.user import User
@@ -41,6 +42,7 @@ def login_required(google_default=False):
 class BaseHandler(webapp2.RequestHandler):
     def render_page(self, template_file, template_variables):
         template_variables['current_user'] = self.current_user
+        template_variables["flash_messages"] = self.session.get_flashes()
 
         if self.google_user:
             template_variables['logout_url'] = g_users.create_logout_url(self.request.uri)
@@ -64,6 +66,9 @@ class BaseHandler(webapp2.RequestHandler):
         global_debug_stats = {}
         global_debug_stats['request_start_time'] = time.time()
 
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+
         self.current_user = None
         self.google_user = None
         self.current_user = auth.get_currently_logged_in_user(self)
@@ -86,12 +91,21 @@ class BaseHandler(webapp2.RequestHandler):
         try:
             webapp2.RequestHandler.dispatch(self)
         finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
             global_debug_stats['request_end_time'] = time.time()
             request_time = global_debug_stats['request_end_time'] - global_debug_stats['request_start_time']
             logging.info("Served request in {0} milliseconds".format(request_time*1000))
             if request_time > 0.2:
                 logging.error("Request taking too long")
                 # raise Exception("Request timed out")
+
+    @webapp2.cached_property
+    def session(self):
+        return self.session_store.get_session(
+            backend="datastore"
+        )
 
 
 class HomeHandler(BaseHandler):
@@ -178,7 +192,9 @@ class RegistrationHandler(BaseHandler):
             }
             return self.render_page('registration', template_variables)
 
-        return self.response.write("Done")
+        facades.login_user(self, user)
+        self.session.add_flash("Registered successfully", "success")
+        return self.redirect('/')
 
 
 class LoginHandler(BaseHandler):

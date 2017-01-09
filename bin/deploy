@@ -26,6 +26,6 @@ echo
 
 echo "Continuing with deployment"
 
-appcfg.py -A ultimateplayer-me-live -V $VERSION update ../app
+appcfg.py -A tomi33-url-shortener -V $VERSION update ../app
 
 echo "Deployed $VERSION to App Engine"

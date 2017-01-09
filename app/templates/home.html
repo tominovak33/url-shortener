@@ -6,6 +6,13 @@
     </div>
 </div>
 <div class="row">
+ <div class="col-md-6 col-md-offset-3">
+     {% for message_text, message_type in flash_messages %}
+         <div class="alert alert-{{ message_type }}">{{ message_text }}</div>
+     {% endfor %}
+ </div>
+</div>
+<div class="row">
     <div id="new_url_form_wrapper" class="col-md-6 col-md-offset-3">
         {% include 'forms/new_url_form.html' %}
     </div>
@@ -22,5 +29,5 @@
 </div>
 {% endblock %}
 {% block scripts %}
-    <script src="/static/js/main.js"></script>
+    <script src="{{ STATIC_ROOT }}/js/main.js"></script>
 {% endblock %}

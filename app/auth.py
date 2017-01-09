@@ -10,7 +10,7 @@ algorithm = 'HS256'
 
 LOGIN_EXPIRY_TIME = 86400  # 60 days, specified in minutes (60*24*60)
 
-def generate_auth_token(user_key, lang='en-gb'):
+def generate_auth_token(user_key):
     payload = {
         'iss': 'auth@tomi33.co.uk',
         'sub': 'auth@tomi33.co.uk',
